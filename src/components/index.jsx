@@ -1,3 +1,3 @@
-export { default as CryptoPayButton}  from './CryptoPayButton'
+export { default as CryptoPayMiniButton}  from './CryptoPayMiniButton'
 
 

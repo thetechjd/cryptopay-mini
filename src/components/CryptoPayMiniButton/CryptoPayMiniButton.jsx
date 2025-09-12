@@ -5,7 +5,7 @@ import coinbaseLogo from "../../assets/coinbase_icon.png";
 import phantomLogo from "../../assets/phantom-logo.png";
 import "./../../index.css";
 
-const CryptoPayButton = ({
+const CryptoPayMiniButton = ({
   apiKey,
   style,
   label,
@@ -329,4 +329,4 @@ console.log(apiKey)
   );
 };
 
-export default CryptoPayButton;
+export default CryptoPayMiniButton;
