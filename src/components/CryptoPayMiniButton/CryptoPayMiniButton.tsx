@@ -3,7 +3,7 @@ import cadetLogo from "../../assets/cryptocadetlogo_white.png";
 import metamaskLogo from "../../assets/MetaMask_Fox.png";
 import coinbaseLogo from "../../assets/coinbase_icon.png";
 import phantomLogo from "../../assets/phantom-logo.png";
-import trustwalletLogo from "../../assets/trustwallet-logo.png"; // Add Trust Wallet logo
+import trustwalletLogo from "../../assets/trust-wallet-icon.png"; // Add Trust Wallet logo
 import "./../../index.css";
 import { ButtonProps, User } from "../../types/types";
 
