@@ -3,7 +3,7 @@ import cadetLogo from "../../assets/cryptocadetlogo_white.png";
 import metamaskLogo from "../../assets/MetaMask_Fox.png";
 import coinbaseLogo from "../../assets/coinbase_icon.png";
 import phantomLogo from "../../assets/phantom-logo.png";
-import trustwalletLogo from "../../assets/trustwallet-icon.png"; // Add Trust Wallet logo
+import trustwalletLogo from "../../assets/trustwallet-logo.png"; // Add Trust Wallet logo
 import "./../../index.css";
 import { ButtonProps, User } from "../../types/types";
 
@@ -192,10 +192,19 @@ console.log(apiKey)
   }
 
   const goToTrustWallet = async () => {
-    // Trust Wallet deep link - coin_id=60 is for Ethereum/EVM chains
-    const url = `https://link.trustwallet.com/open_url?coin_id=60&url=https://mini.cryptocadet.app?pubKey=${apiKey}&refId=${refId}&amount=${amount}&method=${method}&walletApp=true`;
+    // Build the full dapp URL with all parameters first
+    const dappUrl = `https://mini.cryptocadet.app?pubKey=${apiKey}&refId=${refId || ''}&amount=${amount || ''}&method=${method || ''}&walletApp=true`;
     
-    window.location.href = url;
+    // Encode the entire URL for Trust Wallet's url parameter
+    const encodedDappUrl = encodeURIComponent(dappUrl);
+    
+    // Trust Wallet deep link - coin_id=60 is for Ethereum/EVM chains
+    const trustWalletUrl = `https://link.trustwallet.com/open_url?coin_id=60&url=${encodedDappUrl}`;
+    
+    console.log('Trust Wallet URL:', trustWalletUrl);
+    console.log('Decoded dapp URL:', dappUrl);
+    
+    window.location.href = trustWalletUrl;
   }
 
   
