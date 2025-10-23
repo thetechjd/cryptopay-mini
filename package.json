@@ -1,20 +1,22 @@
 {
-  "name": "@cryptocadet/crypto-pay-mini",
+  "name": "@cryptocadet/cryptopay-mini",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.3.1",
   "author": "The TechJD",
   "license": "MIT",
   "description": "Minimal payment router for accepting payments on EVM and Solana.",
   "files": [
     "dist"
   ],
-  "main": "./dist/react-crypto-pay.umd.js",
-  "module": "./dist/react-crypto-pay.es.js",
-  "exports": {
-    ".": {
-      "import": "./dist/react-crypto-pay.es.js",
-      "require": "./dist/react-crypto-pay.umd.js"
-    },
+  "main": "./dist/cryptopay-mini.umd.js",
+  "module": "./dist/cryptopay-mini.es.js",
+  "types": "./dist/index.d.ts",
+ "exports": {
+       ".": {
+         "import": "./dist/cryptopay-mini.es.js",
+         "require": "./dist/cryptopay-mini.umd.js",
+         "types": "./dist/index.d.ts"
+       },
     "./dist/style.css": {
       "import": "./dist/style.css",
       "require": "./dist/styles.css"
@@ -22,13 +24,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thetechjd/react-crypto-pay.git"
+    "url": "git+https://github.com/thetechjd/cryptopay-mini.git"
   },
   "keywords": [
     "react",
     "crypto",
     "evm",
-    "wallet"
+    "wallet",
+    "vite",
+    "solana",
+    "checkout"
   ],
   "type": "module",
   "publishConfig": {
@@ -56,10 +61,16 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "jsdom": "^24.0.0",
+    "typescript": "^5.9.2",
     "vite": "^5.1.4",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^3.2.4"
   },
   "dependencies": {
     "styled-components": "^6.1.19"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
   }
 }

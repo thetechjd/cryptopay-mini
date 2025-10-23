@@ -3,20 +3,16 @@ import cadetLogo from "../../assets/cryptocadetlogo_white.png";
 import metamaskLogo from "../../assets/MetaMask_Fox.png";
 import coinbaseLogo from "../../assets/coinbase_icon.png";
 import phantomLogo from "../../assets/phantom-logo.png";
+import trustwalletLogo from "../../assets/trustwallet-icon.png"; // Add Trust Wallet logo
 import "./../../index.css";
+import { ButtonProps, User } from "../../types/types";
 
-const CryptoPayMiniButton = ({
-  apiKey,
-  style,
-  label,
-  amount
-}) => {
+const CryptoPayMiniButton: React.FC<ButtonProps> = ({apiKey, label, style, amount, refId, method, dev }) => {
   
   
   const [showModal, setShowModal] = useState(false);
-  const [refId, setRefId] = useState("")
-  const [checkout, setCheckout] = useState(false)
-  const [user, setUser] = useState()
+
+  const [user, setUser] = useState<User | null>(null)
   
 
   const endPoint = "https://api.cryptocadet.app";
@@ -25,23 +21,22 @@ const CryptoPayMiniButton = ({
   //const portal = "https://portal.cryptocadet.app"
   const portal = "https://mini.cryptocadet.app"
 
-  const wrapperRef = useRef(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
 
   useEffect(() => {
-      function handleClickOutside(event) {
-          if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-              setShowModal(false);
-              console.log("Modal closed")
-          }
-      }
+    function handleClickOutside(event: MouseEvent) {
+        if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+            setShowModal(false);
+            console.log("Modal closed");
+        }
+    }
 
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
-      };
-  }, [wrapperRef]);
-
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+    };
+}, [wrapperRef]);
 
   
 
@@ -49,23 +44,18 @@ const CryptoPayMiniButton = ({
 
 
   function isMobileDevice() {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
     return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
-      userAgent.toLowerCase()
+      userAgent!.toLowerCase()
     );
   }
 
 
   const handleDevice = async () => {
 
-    let refCode = "";
-
+   
     if (typeof window !== "undefined") {
-      const q = new URLSearchParams(window.location.search);
-      if (q.get("refId")){
-       refCode = q.get("refId");
-       setRefId(refCode)
-      }
+      
       
     }
 
@@ -77,7 +67,7 @@ const CryptoPayMiniButton = ({
   
     } else {
       console.log("You are not using a mobile device.");
-      openPortal(refCode);
+      openPortal(refId || "");
       
       
      
@@ -104,7 +94,7 @@ console.log(apiKey)
   });
   if (!response.ok) {
     const errText = await response.text();
-    throw new Error(`HTTP ${res.status}: ${errText}`);
+    throw new Error(`HTTP ${response.status}: ${errText}`);
   }
 
  
@@ -119,7 +109,7 @@ console.log(apiKey)
   };
 
 
-  const openPortal = async (refCode) => {
+  const openPortal = async (refCode : string) => {
 
    
     let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
@@ -143,21 +133,23 @@ console.log(apiKey)
       
 
       if (response.ok) {
-          const newUrl = `${portal}?pubKey=${apiKey}&amount=${amount}&refId=${refCode}`;
+          const newUrl = `${portal}?pubKey=${apiKey}&amount=${amount}&refId=${refCode}&method=${method}&dev=${dev}`;
           console.log('Navigating to:', newUrl);
+
+       
   
-          newWindow.location = newUrl;
+          newWindow!.location = newUrl;
 
       
 
       } else {
           console.log('Closing window due to unsuccessful response');
-         newWindow.close();
+         newWindow!.close();
       }
   } catch (error) {
       console.error('Error:', error);
       console.log('Closing window due to error');
-      newWindow.close();
+      newWindow!.close();
   
   
 };
@@ -171,11 +163,12 @@ console.log(apiKey)
     
     const queryParams = new URLSearchParams({
       pubKey: apiKey,
-      refId: refId,
-      amount: amount,
-      walletApp: true,
+      refId: refId || "",
+      amount: amount?.toString() || "0",
+      method: method || "",
+      walletApp: String(true), // or walletApp.toString() if it's a variable
       ref: "https://cryptocadet.io"
-
+  
     });
     
    
@@ -187,13 +180,21 @@ console.log(apiKey)
 
 
   const goToCoinbase = async () => {
-    const url = `https://go.cb-w.com/dapp?cb_url=https%3A%2F%2Fmini.cryptocadet.app%3FpubKey%3D${apiKey}%26refId%3D${refId}%26amount%3D${amount}%26walletApp%3D${true}`;
+    const url = `https://go.cb-w.com/dapp?cb_url=https%3A%2F%2Fmini.cryptocadet.app%3FpubKey%3D${apiKey}%26refId%3D${refId}%26amount%3D${amount}%26method%3D${method}%26walletApp%3D${true}`;
    
     window.location.href = url;
   }
+
   const goToMetamask = async () => {
-    const url = `https://metamask.app.link/dapp/mini.cryptocadet.app?pubKey=${apiKey}&refId=${refId}&amount=${amount}&walletApp=true`;
+    const url = `https://metamask.app.link/dapp/mini.cryptocadet.app?pubKey=${apiKey}&refId=${refId}&amount=${amount}&method=${method}&walletApp=true`;
    
+    window.location.href = url;
+  }
+
+  const goToTrustWallet = async () => {
+    // Trust Wallet deep link - coin_id=60 is for Ethereum/EVM chains
+    const url = `https://link.trustwallet.com/open_url?coin_id=60&url=https://mini.cryptocadet.app?pubKey=${apiKey}&refId=${refId}&amount=${amount}&method=${method}&walletApp=true`;
+    
     window.location.href = url;
   }
 
@@ -213,16 +214,7 @@ console.log(apiKey)
     borderRadius: "5px",
     cursor: "pointer",
   };
-  const defaultCartStyle = {
-    // Define default styles here
-    padding: "9px 18px",
-    backgroundColor: "#0c0a09",
-    color: "#fff",
-    marginLeft: '2px',
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  };
+  
   
   // Default styles for the modal and buttons
   const defaultStyle = {
@@ -258,7 +250,7 @@ console.log(apiKey)
       border: "none",
       borderRadius: "5px",
       cursor: "pointer",
-      textAlign: "center",
+      textAlign: "center" as const,
     },
   };
 
@@ -288,39 +280,57 @@ console.log(apiKey)
                 justifyContent: "center",
               }}
             >
-              <img src={user && user.logo ? user.logo : cadetLogo} style={{ height: "48px" }} />
+              <img src={user && user.logo ? user.logo : cadetLogo} style={{ height: "48px" }} alt="Logo" />
              
             </span>
             
-                <button onClick={goToMetamask} style={defaultStyle.button} >
-                    <span style={{
+            <button onClick={goToMetamask} style={defaultStyle.button} >
+              <span style={{
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent:"center"
-                
-              }}><img src={metamaskLogo} style={{ height: "24px", marginRight: "10px" }} />Open Metamask</span>
-                  </button>
-                  <button onClick={goToCoinbase} style={defaultStyle.button}>
-                  <span style={{
+              }}>
+                <img src={metamaskLogo} style={{ height: "24px", marginRight: "10px" }} alt="MetaMask" />
+                Open MetaMask
+              </span>
+            </button>
+
+            <button onClick={goToTrustWallet} style={defaultStyle.button}>
+              <span style={{
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent:"center"
-                
-                
-              }}><img src={coinbaseLogo} style={{ height: "24px", marginRight: "10px" }} />Open CoinBase</span>
-                  </button>
-                  <button onClick={phantomConnect} style={defaultStyle.button}>
-                  <span style={{
+              }}>
+                <img src={trustwalletLogo} style={{ height: "24px", marginRight: "10px" }} alt="Trust Wallet" />
+                Open Trust Wallet
+              </span>
+            </button>
+
+            <button onClick={goToCoinbase} style={defaultStyle.button}>
+              <span style={{
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent:"center"
-                
-                
-              }}><img src={phantomLogo} style={{ height: "24px",marginRight: "10px" }} />Open Phantom</span>
-                  </button>
+              }}>
+                <img src={coinbaseLogo} style={{ height: "24px", marginRight: "10px" }} alt="Coinbase" />
+                Open Coinbase
+              </span>
+            </button>
+
+            <button onClick={phantomConnect} style={defaultStyle.button}>
+              <span style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent:"center"
+              }}>
+                <img src={phantomLogo} style={{ height: "24px", marginRight: "10px" }} alt="Phantom" />
+                Open Phantom
+              </span>
+            </button>
                        
           </div>
         </div>

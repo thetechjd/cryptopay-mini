@@ -32,17 +32,18 @@ npm install @cryptocadet/crypto-pay-mini
 Create a components folder within your app or src folder, and create a new file.
 
 ```sh
-import {CryptoPayModal} from 'crypto-pay-mini'
+import {CryptoPayMiniButton} from '@cryptocadet/cryptopay-mini'
 const ComponentName = () => {
 
     return (
 
-         <CryptoPayButton
+         <CryptoPayMiniButton
      apiKey={'YOUR_API_KEY'}
      label='BUTTON TITLE'
      style={null}
      amount={number}
      refId={'REFERRER ID'}
+     method={'method'}
      
       /> 
 
